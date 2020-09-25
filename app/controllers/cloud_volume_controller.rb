@@ -38,16 +38,24 @@ class CloudVolumeController < ApplicationController
     when 'cloud_volume_edit'
       javascript_redirect(:action => 'edit', :id => checked_item_id)
     when 'cloud_volume_snapshot_create'
-      javascript_redirect(:action => 'snapshot_new', :id => checked_item_id)
+      validate_results = validate_item_supports_action_button(:snapshot_create, CloudVolume)
+      if validate_results[:action_supported] then javascript_redirect(:action => 'snapshot_new', :id => checked_item_id) end
     when 'cloud_volume_new'
       javascript_redirect(:action => 'new')
     when 'cloud_volume_backup_create'
-      javascript_redirect(:action => 'backup_new', :id => checked_item_id)
+      validate_results = validate_item_supports_action_button(:backup_create, CloudVolume)
+      if validate_results[:action_supported] then javascript_redirect(:action => 'backup_new', :id => checked_item_id) end
     when 'cloud_volume_backup_restore'
-      javascript_redirect(:action => 'backup_select', :id => checked_item_id)
+      validate_results = validate_item_supports_action_button(:backup_restore, CloudVolume)
+      if validate_results[:action_supported] then javascript_redirect(:action => 'backup_select', :id => checked_item_id) end
     else
       return false
     end
+
+    if validate_results && validate_results[:message]
+      render_flash(validate_results[:message], :error)
+    end
+
     true
   end
 
