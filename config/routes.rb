@@ -1320,17 +1320,38 @@ Rails.application.routes.draw do
       )
     },
 
-    :physical_storage    => {
-      :get  => %w(
+    :physical_storage => {
+        :get => %w[
+        discover
         download_data
-        show_list
+        download_summary_pdf
+        protect
         show
       ),
 
       :post  => %w(
         show_list
-        quick_search
-      ) + adv_search_post + save_post,
+        tagging_edit
+        new
+      ],
+        :post => %w[
+          button
+          create
+          listnav_search_selected
+          protect
+          quick_search
+          show
+          show_list
+          tagging_edit
+          tl_chooser
+          tree_autoload
+          wait_for_task
+        ] +
+            adv_search_post +
+            dialog_runner_post +
+            discover_get_post +
+            exp_post +
+            save_post
     },
 
     :physical_chassis    => {

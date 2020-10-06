@@ -735,6 +735,7 @@ module ApplicationHelper
 
   def display_adv_search?
     %w[auth_key_pair_cloud
+       physical_storage
        storage_resource
        availability_zone
        automation_manager
@@ -1074,6 +1075,7 @@ module ApplicationHelper
                              container_service
                              container_template
                              storage_resource
+                             physical_storage
                              container_topology
                              ems_block_storage
                              ems_cloud
