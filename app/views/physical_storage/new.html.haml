@@ -1,0 +1,4 @@
+= react('PhysicalStorageForm',
+{:redirect => previous_breadcrumb_url,
+ :providers => ExtManagementSystem.select{|ems| ems.supports_block_storage}.map {|ems| {label: ems.name.to_s, value: ems.id.to_s}}})
+
