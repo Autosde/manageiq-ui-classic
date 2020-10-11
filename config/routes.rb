@@ -3191,6 +3191,7 @@ Rails.application.routes.draw do
     ems_cloud_dashboard
     ems_container
     ems_infra
+    ems_storage_dashboard
     ems_infra_dashboard
     ems_network
     ems_physical_infra
