@@ -71,6 +71,19 @@ class ApplicationHelper::Toolbar::CloudVolumesCenter < ApplicationHelper::Toolba
                        :onwhen       => '1'
                      ),
                      button(
+                       :cloud_volume_safe_delete,
+                       'pficon pficon-delete fa-lg',
+                       t = N_('Safely delete the Cloud Volume'),
+                       t,
+                       :klass        => ApplicationHelper::Button::PolymorphicConditionalButton,
+                       :options      => {:feature      => :safe_delete,
+                                         :parent_class => "CloudVolume"},
+                       :url_parms    => 'main_div',
+                       :send_checked => true,
+                       :enabled      => false,
+                       :onwhen       => '1'
+                     ),
+                     button(
                        :cloud_volume_edit,
                        'pficon pficon-edit fa-lg',
                        t = N_('Edit selected Cloud Volume'),
