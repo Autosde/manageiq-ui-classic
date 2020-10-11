@@ -48,6 +48,13 @@ class CloudVolumeController < ApplicationController
     when 'cloud_volume_backup_restore'
       validate_results = validate_item_supports_action_button(:backup_restore, CloudVolume)
       if validate_results[:action_supported] then javascript_redirect(:action => 'backup_select', :id => checked_item_id) end
+    when 'cloud_volume_safe_delete'
+      validate_results = validate_item_supports_action_button(:safe_delete, CloudVolume)
+      if validate_results[:action_supported]
+        @refresh_div = 'main_div'
+        safe_delete_volumes
+        return false
+      end
     else
       return false
     end
@@ -343,6 +350,44 @@ class CloudVolumeController < ApplicationController
   end
 
   # delete selected volumes
+  def safe_delete_volumes
+    assert_privileges("cloud_volume_delete")
+    volumes = find_records_with_rbac(CloudVolume, checked_or_params)
+
+    volumes_to_safe_delete = []
+    volumes.each do |volume|
+      if volume.nil?
+        add_flash(_("Cloud Volume no longer exists."), :error)
+      elsif !volume.attachments.empty?
+        add_flash(_("Cloud Volume \"%{name}\" cannot be removed because it is attached to one or more Instances") %
+                      {:name => volume.name}, :warning)
+      else
+        valid_safe_delete = volume.validate_safe_delete_volume
+        if valid_safe_delete[:available]
+          volumes_to_safe_delete.push(volume)
+        else
+          add_flash(_("Couldn't initiate deletion of Cloud Volume \"%{name}\": %{details}") %
+                        {:name    => volume.name,
+                         :details => valid_delete[:message]}, :error)
+        end
+      end
+    end
+    safe_delete_cloud_volumes(volumes_to_safe_delete) unless volumes_to_safe_delete.empty?
+
+    # refresh the list if applicable
+    if @lastaction == "show_list" && @breadcrumbs.last[:url].include?(@lastaction)
+      show_list
+      @refresh_partial = "layouts/gtl"
+    elsif @lastaction == "show" && @layout == "cloud_volume"
+      @single_delete = true unless flash_errors? || flash_warnings?
+    else
+      drop_breadcrumb(:name => 'dummy', :url => " ") # missing a bc to get correctly back so here's a dummy
+      flash_to_session
+      redirect_to(previous_breadcrumb_url)
+    end
+  end
+
+  # delete selected volumes
   def delete_volumes
     assert_privileges("cloud_volume_delete")
     volumes = find_records_with_rbac(CloudVolume, checked_or_params)
@@ -634,6 +679,23 @@ class CloudVolumeController < ApplicationController
     end
     add_flash(n_("Delete initiated for %{number} Cloud Volume.",
                  "Delete initiated for %{number} Cloud Volumes.",
+                 volumes.length) % {:number => volumes.length})
+  end
+
+  def safe_delete_cloud_volumes(volumes)
+    volumes.each do |volume|
+      audit = {
+        :event        => "cloud_volume_record_safe_delete_initiateed",
+        :message      => "[#{volume.name}] Record safe delete initiated",
+        :target_id    => volume.id,
+        :target_class => "CloudVolume",
+        :userid       => session[:userid]
+      }
+      AuditEvent.success(audit)
+      volume.safe_delete_volume_queue(session[:userid])
+    end
+    add_flash(n_("Safe delete initiated for %{number} Cloud Volume.",
+                 "Safe delete initiated for %{number} Cloud Volumes.",
                  volumes.length) % {:number => volumes.length})
   end
 
