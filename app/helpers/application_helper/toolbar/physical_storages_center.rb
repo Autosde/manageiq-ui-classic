@@ -26,6 +26,21 @@ class ApplicationHelper::Toolbar::PhysicalStoragesCenter < ApplicationHelper::To
             t,
             :url => "/new"
           ),
+          api_button(
+            :physical_storage_delete,
+            nil,
+            t = N_('Delete the Physical Storage'),
+            t,
+            :icon         => "pficon pficon-delete fa-lg",
+            :api          => {
+                :action => 'delete',
+                :entity => 'Physical_storages'
+            },
+            :confirm      => N_("Are you sure?"),
+            :send_checked => true,
+            :enabled      => false,
+            :onwhen       => '1'
+          ),
         ]
       ),
     ]
