@@ -34,12 +34,12 @@ class ApplicationHelper::Toolbar::PhysicalStoragesCenter < ApplicationHelper::To
             :icon         => "pficon pficon-delete fa-lg",
             :api          => {
                 :action => 'delete',
-                :entity => 'Physical_storages'
+                :entity => 'physical_storages'
             },
             :confirm      => N_("Are you sure?"),
             :send_checked => true,
             :enabled      => false,
-            :onwhen       => '1'
+            :onwhen       => '1+'
           ),
         ]
       ),
