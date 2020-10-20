@@ -27,7 +27,6 @@ class ApplicationHelper::Toolbar::PhysicalStoragesCenter < ApplicationHelper::To
             :url => "/new"
           ),
           api_button(
-          # button(
               :physical_storage_delete,
               nil,
               t = N_('Delete the Physical Storage'),
@@ -40,7 +39,7 @@ class ApplicationHelper::Toolbar::PhysicalStoragesCenter < ApplicationHelper::To
                   :action => 'delete',
                   :entity => 'physical_storages'
               },
-              :confirm      => N_("Are you sure you want to delete this physical storage?\n Note that all of the attached services (e.g. volumes) will also be unmanaged."),
+              :confirm      => N_("Are you sure you want to delete this physical storage?\nNote that all of the attached services (e.g. volumes) will be unmapped."),
               :send_checked => true,
               :enabled      => false,
               :onwhen       => '1+'

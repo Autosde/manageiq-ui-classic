@@ -31,7 +31,7 @@ class ApplicationHelper::Toolbar::PhysicalStorageCenter < ApplicationHelper::Too
               :action => 'delete',
               :entity => 'physical_storages'
             },
-            :confirm      => N_("Are you sure you want to delete this physical storage?\n Note that all of the attached services (e.g. volumes) will also be remove."),
+            :confirm      => N_("Are you sure you want to delete this physical storage?\nNote that all of the attached services (e.g. volumes) will be unmapped."),
             :send_checked => true,
           ),
         ]
