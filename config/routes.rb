@@ -2383,7 +2383,7 @@ Rails.application.routes.draw do
         save_post
     },
 
-    :storage_consumer   => {
+    :physical_storage_consumer   => {
       :get  => %w[
         download_data
         download_summary_pdf
