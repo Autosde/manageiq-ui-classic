@@ -12,6 +12,12 @@ class PhysicalStorageConsumerController < ApplicationController
   after_action :cleanup_action
   after_action :set_session_data
 
+  def new
+    @in_a_form = true
+    drop_breadcrumb(:name => _("Define New %{table}") % {:table => ui_lookup(:table => table_name)},
+                    :url  => "/#{controller_name}/new")
+  end
+
   def show
     if params[:id].nil?
       @breadcrumbs.clear
@@ -46,4 +52,16 @@ class PhysicalStorageConsumerController < ApplicationController
 
   # needed to highlight the selected menu section
   menu_section "physical_storage_consumer"
+
+  private
+
+  def specific_buttons(pressed)
+    case pressed
+    when 'physical_storage_consumer_define'
+      javascript_redirect(:action => 'new')
+    else
+      return false
+    end
+    true
+  end
 end
