@@ -26,21 +26,25 @@ class ApplicationHelper::Toolbar::HostInitiatorsCenter < ApplicationHelper::Tool
             t,
             :klass => ApplicationHelper::Button::HostInitiatorNew
           ),
-          api_button(
+          button(
             :host_initiator_delete,
-            nil,
-            t = N_('Delete the Host Initiator'),
+            'pficon pficon-delete fa-lg',
+            t = N_('Delete selected Host Initiators'),
             t,
-            :icon         => "pficon pficon-delete fa-lg",
-            :klass        => ApplicationHelper::Button::PolymorphicConditionalButton,
-            :options      => {:feature      => :delete,
-                              :parent_class => "HostInitiator"},
-            :api          => {
-              :action => 'delete',
-              :entity => 'host_initiators'
-            },
-            :confirm      => N_("Are you sure you want to delete this host initiators?"),
-            :send_checked => true,
+            :url_parms => 'main_div',
+            :klass     => ApplicationHelper::Button::PolymorphicConditionalButton,
+            :options   => {:feature      => :delete,
+                           :parent_class => "HostInitiator"},
+            :data      => {'function'      => 'sendDataWithRx',
+                           'function-data' => {:controller      => 'provider_dialogs',
+                                               :modal_title     => N_('Delete Host Initiators'),
+                                               :modal_text      => N_('Are you sure you want to delete these host initiators?'),
+                                               :api_url         => 'host_initiators',
+                                               :async_delete    => false,
+                                               :ajax_reload     => false,
+                                               :redirect_url    => '/host_initiator/show_list',
+                                               :try_safe_delete => true,
+                                               :component_name  => 'RemoveGenericItemModal'}},
             :enabled      => false,
             :onwhen       => '1+'
           ),
