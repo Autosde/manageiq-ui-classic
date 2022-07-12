@@ -938,6 +938,8 @@ class CatalogController < ApplicationController
       ManageIQ::Providers::Vmware::InfraManager::OvfServiceTemplate
     elsif prov_type.starts_with?('generic')
       prov_type.gsub(/(generic)(_.*)?/, 'service_template\2').classify.constantize
+    elsif prov_type.starts_with?('autosde')
+      ServiceTemplateAutosde
     else
       ServiceTemplate
     end
