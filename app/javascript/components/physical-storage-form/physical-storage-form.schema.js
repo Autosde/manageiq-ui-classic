@@ -67,6 +67,17 @@ const createSchema = (edit, ems, initialValues, state, setState) => {
             },
           },
           {
+            component: componentTypes.RADIO,
+            name: 'storage_capabilities',
+            id: 'storage_capabilities',
+            label: __('Storage Capabilities:'),
+            isRequired: true,
+            options: [
+              {label: 'default', value: true},
+              {label: 'custom', value: false}
+            ]
+          },
+          {
             component: componentTypes.TEXT_FIELD,
             name: 'edit',
             id: 'edit',
