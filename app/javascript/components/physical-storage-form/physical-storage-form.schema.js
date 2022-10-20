@@ -68,14 +68,34 @@ const createSchema = (edit, ems, initialValues, state, setState) => {
           },
           {
             component: componentTypes.RADIO,
-            name: 'storage_capabilities',
-            id: 'storage_capabilities',
-            label: __('Storage Capabilities:'),
+            id: 'capabilities',
+            name: 'capabilities',
+            label: __('Capabilities'),
             isRequired: true,
             options: [
-              {label: 'default', value: true},
-              {label: 'custom', value: false}
-            ]
+              {
+                label: 'Default',
+                value: 'Default',
+              },
+              {
+                label: 'Custom',
+                value: 'Custom',
+              },
+          ],
+          },
+          {
+            component: componentTypes.SELECT,
+            name: 'capabilities_values',
+            id: 'capabilities_values',
+            label: __('capabilities values:'),
+            isRequired: true,
+            isDisabled: edit,
+            loadOptions: () => (emsId ? loadFamilies(emsId) : Promise.resolve([])),
+            includeEmpty: true,
+            condition: {
+              when: 'capabilities',
+              is: 'Custom',
+            },
           },
           {
             component: componentTypes.TEXT_FIELD,
