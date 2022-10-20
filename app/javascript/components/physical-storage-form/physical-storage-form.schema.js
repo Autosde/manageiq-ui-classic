@@ -14,6 +14,22 @@ const loadFamilies = (id) => API.get(`/api/providers/${id}?attributes=type,physi
     value: id,
   })));
 
+export const capabilitiesTypes = [
+  { label: __('Compression True'), value: 'Compression True' },
+  { label: __('Compression False'), value: 'Compression False' },
+  { label: __('Thin Provision True'), value: 'Thin Provision True' },
+];
+
+const loadCapabilityValues = (id) =>
+  // API.get(`/api/providers/${id}?attributes=storage_capability_values`)
+  // // eslint-disable-next-line camelcase
+  // .then(({ storage_capability_values }) => storage_capability_values.map(({ capability_value }) => ({
+  //   label: capability_value,
+  //   value: capability_value,
+  // })));
+  capabilitiesTypes
+
+
 const createSchema = (edit, ems, initialValues, state, setState) => {
   let emsId = state.ems_id;
   if (initialValues && initialValues.ems_id) {
@@ -89,9 +105,12 @@ const createSchema = (edit, ems, initialValues, state, setState) => {
             id: 'capabilities_values',
             label: __('capabilities values:'),
             isRequired: true,
+            isMulti: true,
+            simpleValue: true,
             isDisabled: edit,
-            loadOptions: () => (emsId ? loadFamilies(emsId) : Promise.resolve([])),
-            includeEmpty: true,
+            // loadOptions: () => (emsId ? loadCapabilityValues(emsId) : Promise.resolve([])),
+            options: capabilitiesTypes,
+            includeEmpty: false,
             condition: {
               when: 'capabilities',
               is: 'Custom',
