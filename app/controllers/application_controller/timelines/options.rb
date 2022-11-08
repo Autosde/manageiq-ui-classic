@@ -120,7 +120,8 @@ module ApplicationController::Timelines
     :model,
     :management,
     :policy,
-    :tl_show
+    :tl_show,
+    :storage_filter
   ) do
     def initialize(*args)
       super

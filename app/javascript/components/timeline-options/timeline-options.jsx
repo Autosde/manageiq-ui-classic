@@ -1,15 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import MiqFormRenderer from '@@ddf';
+import MiqFormRenderer, {useFormApi
+} from '@@ddf';
 import PropTypes from 'prop-types';
 import createSchemaSimple from './timeline-options-simple.schema';
+import { Button } from 'carbon-components-react';
 import mapper from '../../forms/mappers/componentMapper';
+import {FormSpy} from "../../forms/data-driven-form";
 
-const TimelineOptions = ({ url }) => {
+const TimelineOptions = ({ url, isFilter }) => {
   const [{
-    isLoading, timelineEvents, managementGroupNames, managementGroupLevels, policyGroupNames, policyGroupLevels,
+    isLoading, fields, timelineEvents, managementGroupNames, managementGroupLevels, policyGroupNames, policyGroupLevels
   }, setState] = useState({
     isLoading: true,
+    fields: []
   });
+
+  const ParseId = () => {
+    const url_split = url.split('/');
+    return url_split[url_split.length - 1];
+  }
+
+
+  const loadSchema = (appendState = {}) => ({ data: { form_schema: { fields } } }) => {
+    setState((state) => ({
+      ...state,
+      ...appendState,
+      fields,
+      isLoading: false,
+    }));
+  };
 
   useEffect(() => {
     if (isLoading) {
@@ -21,6 +40,17 @@ const TimelineOptions = ({ url }) => {
           { label: data.EmsEvent.description, value: 'EmsEvent' },
           { label: data.MiqEvent.description, value: 'MiqEvent' },
         ];
+
+        const storageId = ParseId();
+
+        if (isFilter && url.includes("ems_storage")) {
+          API.get(`/api/providers/${storageId}?attributes=type,physical_storages`)
+            .then((response) => {
+              const firstId = response.physical_storages[0].id
+              API.options(`/api/physical_storages/${firstId}?option_action=filter`)
+                .then(loadSchema());
+            });
+        }
 
         // Management Events
         Object.entries(data.EmsEvent.group_names).forEach((entry) => {
@@ -60,6 +90,7 @@ const TimelineOptions = ({ url }) => {
 
   const onSubmit = (values) => {
     miqSparkleOn();
+    console.log("values = ", values);
     const show = values.timelineEvents === 'EmsEvent' ? 'timeline' : 'policy_timeline';
     const categories = values.timelineEvents === 'EmsEvent' ? values.managementGroupNames : values.policyGroupNames;
     const vmData = {
@@ -67,7 +98,9 @@ const TimelineOptions = ({ url }) => {
       tl_categories: categories,
       tl_levels: values.managementGroupLevels ? values.managementGroupLevels : [],
       tl_result: values.policyGroupLevels ? values.policyGroupLevels : 'success',
+      tl_physical: values.PhysicalStorageId ? values.PhysicalStorageId: [],
     };
+    console.log("vmData = ", vmData);
     window.ManageIQ.calendar.calDateFrom = values.startDate;
     window.ManageIQ.calendar.calDateTo = values.endDate;
     window.miqJqueryRequest(url, { beforeSend: true, data: vmData });
@@ -84,7 +117,7 @@ const TimelineOptions = ({ url }) => {
       <MiqFormRenderer
         componentMapper={mapper}
         schema={createSchemaSimple(
-          timelineEvents, managementGroupNames, managementGroupLevels, policyGroupNames, policyGroupLevels,
+          timelineEvents, fields, managementGroupNames, managementGroupLevels, policyGroupNames, policyGroupLevels
         )}
         onSubmit={onSubmit}
         onReset={onReset}
@@ -96,10 +129,16 @@ const TimelineOptions = ({ url }) => {
 
 TimelineOptions.propTypes = {
   url: PropTypes.string,
+  isFilter: PropTypes.bool,
+  storageManagerId: PropTypes.string,
+  fields: PropTypes.arrayOf(PropTypes.any)
 };
 
 TimelineOptions.defaultProps = {
   url: '',
+  isFilter: false,
+  storageManagerId: undefined,
+  fields: []
 };
 
 export default TimelineOptions;

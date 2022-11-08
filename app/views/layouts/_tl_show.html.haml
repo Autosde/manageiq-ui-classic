@@ -1,7 +1,10 @@
 %h1
   = @title
 = render :partial => "layouts/flash_msg"
-= react 'TimelineOptions', {:url => url_for_only_path(:action => 'tl_chooser', :id => @record.id)}
+- if @record.kind_of?(ManageIQ::Providers::Autosde::StorageManager)
+  = react 'TimelineOptions', {:url => url_for_only_path(:action => 'tl_chooser', :id => @record.id), :isFilter => true}
+- else
+  = react 'TimelineOptions', {:url => url_for_only_path(:action => 'tl_chooser', :id => @record.id), :isFilter => false}
 = render :partial => 'layouts/tl_detail'
 
 = _("* Dates/Times on this page are based on time zone: %{time_zone}.") % {:time_zone => session[:user_tz]}

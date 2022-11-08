@@ -59,6 +59,7 @@ module ApplicationController::Timelines
     @tl_options.tl_show = params[:tl_show] || "timeline"
     sdate, edate = @tl_record.first_and_last_event(@tl_options.evt_type)
     @tl_options.date.update_start_end(sdate, edate)
+    @tl_options.storage_filter = params["tl_physical"]
 
     if @tl_options.policy_events?
       @tl_options.policy.result ||= "both"
@@ -76,6 +77,8 @@ module ApplicationController::Timelines
   end
 
   def tl_build_timeline_report_options
+    require 'byebug'
+    byebug
     if !@tl_options.date.start.nil? && !@tl_options.date.end.nil?
       tl_type = @tl_options.management_events? ? "events" : "policy_events"
       tl_granularity = case @tl_options.date.typ
