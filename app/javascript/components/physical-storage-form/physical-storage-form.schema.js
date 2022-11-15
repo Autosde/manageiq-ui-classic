@@ -14,23 +14,32 @@ const loadFamilies = (id) => API.get(`/api/providers/${id}?attributes=type,physi
     value: id,
   })));
 
-export const capabilitiesTypes = [
-  { label: __('Compression True'), value: 'Compression True' },
-  { label: __('Compression False'), value: 'Compression False' },
-  { label: __('Thin Provision True'), value: 'Thin Provision True' },
-];
+function getCapabilityName(capabilityId) {
+  return new Promise(async function (resolve, reject) {
+    const result = await API.get(`/api/storage_capabilities/${capabilityId}?attributes=name`)
+    resolve(result['name'])
+  })
+}
 
-const loadCapabilityValues = (id) =>
-  // API.get(`/api/providers/${id}?attributes=storage_capability_values`)
-  // // eslint-disable-next-line camelcase
-  // .then(({ storage_capability_values }) => storage_capability_values.map(({ capability_value }) => ({
-  //   label: capability_value,
-  //   value: capability_value,
-  // })));
-  capabilitiesTypes
+// const getCapabilityName = (capabilityId) =>
+//   API.get(`/api/storage_capabilities/${capabilityId}?attributes=name`)
 
 
-const createSchema = (edit, ems, initialValues, state, setState) => {
+const loadCapabilityValues = (familyId) =>
+  API.get(
+    `/api/physical_storage_families/${familyId}?attributes=storage_capability_values`)
+  .then(
+    ({storage_capability_values}) =>
+      storage_capability_values.map(({storage_capability_id, ems_ref, value}) => ({
+        label: getCapabilityName(storage_capability_id) + ": " + value,
+        value: ems_ref
+      })))
+
+// const loadCapabilityValues = (familyId) =>
+//           getCapabilityName(2).then((result) => console.log("This looks very Promise: ", result))
+
+
+const createSchema = (edit, ems, initialValues, state, setState, familyId, setFamilyId) => {
   let emsId = state.ems_id;
   if (initialValues && initialValues.ems_id) {
     emsId = initialValues.ems_id;
@@ -75,6 +84,7 @@ const createSchema = (edit, ems, initialValues, state, setState) => {
             isDisabled: edit,
             validate: [{ type: validatorTypes.REQUIRED }],
             loadOptions: () => (emsId ? loadFamilies(emsId) : Promise.resolve([])),
+            onChange: (value) => setFamilyId(value),
             includeEmpty: true,
             key: `physical_storage_family_id-${emsId}`,
             condition: {
@@ -98,6 +108,10 @@ const createSchema = (edit, ems, initialValues, state, setState) => {
                 value: 'Custom',
               },
           ],
+            condition: {
+              when: 'physical_storage_family_id',
+              isNotEmpty: true,
+            },
           },
           {
             component: componentTypes.SELECT,
@@ -108,8 +122,8 @@ const createSchema = (edit, ems, initialValues, state, setState) => {
             isMulti: true,
             simpleValue: true,
             isDisabled: edit,
-            // loadOptions: () => (emsId ? loadCapabilityValues(emsId) : Promise.resolve([])),
-            options: capabilitiesTypes,
+            loadOptions: () => (familyId ? loadCapabilityValues(familyId) : Promise.resolve([])),
+            // loadOptions: loadCapabilityValues(familyId),
             includeEmpty: false,
             condition: {
               when: 'capabilities',

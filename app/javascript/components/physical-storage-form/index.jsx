@@ -11,6 +11,8 @@ import ValidateStorageCredentials from "./validate-storage-credentials";
 const PhysicalStorageForm = ({ recordId, storageManagerId }) => {
   const [state, setState] = useState({});
   const { isLoading, initialValues } = state;
+  const [familyId, setFamilyId] = useState(undefined);
+
   const submitLabel = !!recordId ? __('Save') : __('Add');
 
   const loadSchema = (appendState = {}) => () => {
@@ -70,7 +72,7 @@ const PhysicalStorageForm = ({ recordId, storageManagerId }) => {
         <EditingContext.Provider value={{ storageManagerId, setState }}>
           <MiqFormRenderer
             componentMapper={componentMapper}
-            schema={createSchema(!!recordId, !!storageManagerId, initialValues, state, setState)}
+            schema={createSchema(!!recordId, !!storageManagerId, initialValues, state, setState, familyId, setFamilyId)}
             initialValues={initialValues}
             canReset={!!recordId}
             onSubmit={onSubmit}
