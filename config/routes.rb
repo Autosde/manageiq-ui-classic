@@ -3273,4 +3273,6 @@ Rails.application.routes.draw do
   end
   # rubocop:enable Layout/HashAlignment
   # rubocop:enable Layout/MultilineOperationIndentation
+  #
+  get 'service_now/new', to: 'service_now#new', as: 'new_service_now'
 end
