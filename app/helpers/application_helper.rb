@@ -251,7 +251,7 @@ module ApplicationHelper
       if controller == "ems_storage" && action == "show"
         return ems_storages_path
       end
-    
+
       if request[:controller] == 'service' && view.db == 'GenericObject'
         action = 'show'
         return url_for_only_path(:action => action, :id => params[:id]) + "?display=generic_objects&generic_object_id="
@@ -705,6 +705,7 @@ module ApplicationHelper
                               center_toolbar_filename
                             end
     toolbars['custom_tb'] = controller.custom_toolbar
+    toolbars['service_now_tb'] = "service_now_dropdown_tb"
 
     toolbars['view_tb'] = inner_layout_present? ? x_view_toolbar_filename : view_toolbar_filename
     toolbars
