@@ -1,0 +1,6 @@
+= render :partial => "layouts/flash_msg"
+
+- if @storage_manager
+    = react 'CloudVolumeForm', :storageManagerId => @storage_manager.id.to_s
+- else
+    = react 'CloudVolumeForm'
