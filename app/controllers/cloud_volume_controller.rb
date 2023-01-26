@@ -33,7 +33,12 @@ class CloudVolumeController < ApplicationController
     if validate_action
       validate_results = validate_item_supports_action_button(validate_action, CloudVolume)
       if validate_results[:action_supported]
-        javascript_redirect(:action => ui_action, :id => checked_item_id)
+        @volume = find_record_with_rbac(CloudVolume, checked_item_id)
+        if @volume.class.name.start_with?("ManageIQ::Providers::Autosde") and ui_action == "attach"
+          javascript_redirect(:controller => "volume_mapping", :action => "new", :storage_manager_id => @volume.ems_id)
+        else
+          javascript_redirect(:action => ui_action, :id => checked_item_id)
+        end
       else
         render_flash(validate_results[:message], :error)
       end
