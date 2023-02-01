@@ -474,6 +474,9 @@ module Mixins
         render_or_redirect_partial(pfx) unless performed?
       elsif @refresh_div == "main_div" && @lastaction == "show_list"
         replace_gtl_main_div
+      elsif params[:pressed] == "service_now_new"
+        javascript_redirect(:controller => "service_now",
+                            :action     => "new")
       else
         render_flash unless performed?
       end

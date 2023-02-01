@@ -2361,6 +2361,12 @@ Rails.application.routes.draw do
         save_post
     },
 
+    :service_now   => {
+      :get  => %w[
+        new
+      ],
+    },
+
     :volume_mapping => {
       :get  => %w[
         download_data
@@ -3274,5 +3280,4 @@ Rails.application.routes.draw do
   # rubocop:enable Layout/HashAlignment
   # rubocop:enable Layout/MultilineOperationIndentation
   #
-  get 'service_now/new', to: 'service_now#new', as: 'new_service_now'
 end

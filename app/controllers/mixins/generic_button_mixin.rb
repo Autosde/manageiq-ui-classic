@@ -20,6 +20,14 @@ module Mixins
       [:continue, pfx]
     end
 
+    def handle_service_now_buttons(pressed)
+      case pressed
+      when 'service_now_new'
+        javascript_redirect(:action => 'new', :controller => 'service_now')
+      end
+    end
+
+
     def handle_tag_buttons(pressed)
       case pressed
       when "#{self.class.table_name}_tag"     then tag(self.class.model)
@@ -51,6 +59,11 @@ module Mixins
 
       if params[:pressed] == "custom_button"
         custom_buttons
+        return
+      end
+
+      if params[:pressed] == "service_now_new"
+        handle_service_now_buttons(params[:pressed])
         return
       end
 
