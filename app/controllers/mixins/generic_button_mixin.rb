@@ -24,9 +24,10 @@ module Mixins
       case pressed
       when 'service_now_new'
         javascript_redirect(:action => 'new', :controller => 'service_now')
+      when 'service_now_connect'
+        javascript_redirect(:action => 'connect', :controller => 'service_now')
       end
     end
-
 
     def handle_tag_buttons(pressed)
       case pressed
@@ -61,8 +62,7 @@ module Mixins
         custom_buttons
         return
       end
-
-      if params[:pressed] == "service_now_new"
+      if params[:pressed].starts_with?("service_now")
         handle_service_now_buttons(params[:pressed])
         return
       end
