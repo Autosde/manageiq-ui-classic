@@ -2361,10 +2361,23 @@ Rails.application.routes.draw do
         save_post
     },
 
-    :service_now   => {
+    :service_now => {
       :get  => %w[
+        index
+        show
+        show_list
         new
+        connect
       ],
+      :post => %w[
+        button
+        listnav_search_selected
+        quick_search
+        show_list
+      ] +
+        adv_search_post +
+        exp_post +
+        save_post
     },
 
     :volume_mapping => {
