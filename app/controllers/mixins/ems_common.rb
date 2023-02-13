@@ -477,6 +477,10 @@ module Mixins
       elsif params[:pressed] == "service_now_new"
         javascript_redirect(:controller => "service_now",
                             :action     => "new")
+      elsif params[:pressed] == "service_now_connect"
+        javascript_redirect(:controller => "service_now",
+                            :action     => "connect")
+
       else
         render_flash unless performed?
       end
