@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import MiqFormRenderer from '@@ddf';
@@ -11,15 +11,13 @@ import {API} from "../../http_api";
 const ServiceNowForm = ({ recordId }) => {
   const [{ initialValues, isLoading }, setState] = useState({ isLoading: !!recordId });
   const submitLabel = !!recordId ? __('Save') : __('Add');
-  const onSubmit = (values) => API.post('/api/service_now', {
-    action: 'service_now_new',
-    resource: {
-      ...values,
-    },
-  }).then(() => miqRedirectBack(
-    sprintf(__('Service Dialog "%s" was successfully created'), values.label),
-    'success', miqRedirectBackAdress,
-  ));
+  const onSubmit = (values) => API.post('/api/service_nows',values).then((response) => {
+    if (response.results) {
+      add_flash(__('Service Now ticket added sucessfully'), 'success');
+    } else {
+      add_flash(response.error.message, 'error');
+    }
+  });
 
   return !isLoading && (
     <MiqFormRenderer
@@ -39,4 +37,3 @@ ServiceNowForm.defaultProps = {
 
 
 export default ServiceNowForm;
-
