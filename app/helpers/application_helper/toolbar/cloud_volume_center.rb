@@ -68,6 +68,17 @@ class ApplicationHelper::Toolbar::CloudVolumeCenter < ApplicationHelper::Toolbar
                      ),
 
                      button(
+                       :cloud_volume_migrate,
+                       'pficon pficon-volume fa-lg',
+                       t = N_('Migrate this Cloud Volume'),
+                       t,
+                       :klass        => ApplicationHelper::Button::VolumeMigrate,
+                       :options      => {:feature => :migrate_volume},
+                       :url_parms    => 'main_div',
+                       :send_checked => true
+                     ),
+
+                     button(
                        :cloud_volume_edit,
                        'pficon pficon-edit fa-lg',
                        t = N_('Edit this Cloud Volume'),

@@ -522,6 +522,7 @@ Rails.application.routes.draw do
         attach
         detach
         clone
+        migrate
         backup_new
         backup_select
         snapshot_new

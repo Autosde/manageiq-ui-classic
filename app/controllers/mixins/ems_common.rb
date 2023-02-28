@@ -447,6 +447,10 @@ module Mixins
         javascript_redirect(:controller => "cloud_volume",
                             :action     => "clone",
                             :id         => find_record_with_rbac(CloudVolume, checked_or_params))
+      elsif params[:pressed] == "cloud_volume_migrate"
+        javascript_redirect(:controller => "cloud_volume",
+                            :action     => "migrate",
+                            :id         => find_record_with_rbac(CloudVolume, checked_or_params))
       elsif params[:pressed] == "cloud_volume_edit"
         javascript_redirect(:controller => "cloud_volume",
                             :action     => "edit",
