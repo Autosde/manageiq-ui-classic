@@ -29,7 +29,7 @@ const MigrateCloudVolumeForm = ({ recordId }) => {
   const onSubmit = (values) => {
     miqSparkleOn();
     const resource = {
-      name: values.name,
+      dest_resource: values.dest_resource,
     };
     const payload = {
       action: 'migrate',
@@ -56,7 +56,7 @@ const MigrateCloudVolumeForm = ({ recordId }) => {
   return !isLoading && (
     <div className="tasks-form">
       <MiqFormRenderer
-        schema={createSchema(fields)}
+        schema={createSchema(fields, recordId)}
         onSubmit={onSubmit}
         onCancel={onCancel}
         canReset
@@ -69,7 +69,7 @@ const MigrateCloudVolumeForm = ({ recordId }) => {
 
 const verifyIsDisabled = (values) => {
   let isDisabled = true;
-  if (values.name){
+  if (values.dest_resource){
     isDisabled = false;
   }
   return isDisabled;

@@ -1,35 +1,33 @@
 import validateName from "../../helpers/validate-names";
 import {componentTypes, validatorTypes} from "../../forms/data-driven-form";
 
-const createSchema = (dynamicFields) => ({
+const storageResources = async (volume_id) => {
+  console.log("vol_id = ", volume_id);
+  const originResourceId = await API.get(`/api/cloud_volumes/${volume_id}`)
+    .then((resource) => {
+      console.log("volume resource = ", resource);
+      return resource.storage_resource_id;
+    })
+  return API.get(`/api/storage_resources?expand=resources`)
+    .then(({resources}) => {
+      const storageResourceOptions = resources.map(({id, name, ems_ref}) => ({label: name, value: ems_ref, id: id}));
+      storageResourceOptions.unshift({label: `<${__('Choose')}>`, value: '-1'});
+      const idx = storageResourceOptions.findIndex((item) => item.id === originResourceId);
+      storageResourceOptions.splice(idx, 1);
+      return storageResourceOptions
+    })
+};
+
+const createSchema = (dynamicFields, volume_id) => ({
   fields: [
     {
-      component: componentTypes.TEXT_FIELD,
-      name: 'resource_name',
-      id: 'resource_name',
-      label: __('Resource Name'),
+      component: componentTypes.SELECT,
+      name: 'dest_resource',
+      id: 'dest_resource',
+      label: __('Storage Resource Name'),
+      loadOptions: () => storageResources(volume_id),
       isRequired: true,
-      validate: [
-        {
-          type: validatorTypes.REQUIRED,
-        },
-        {
-          type: 'pattern',
-          pattern: '^[a-zA-Z0-9\-_. ]*$',
-          message: __('The name can contain letters, numbers, spaces, periods, dashes and underscores'),
-        },
-        {
-          type: 'pattern',
-          pattern: '^[^ ]+( +[^ ]+)*$',
-          message: __('The name must not begin or end with a space'),
-        },
-        {
-          type: 'pattern',
-          pattern: '^[a-zA-Z_]',
-          message: __('The name must begin with a letter or an underscore'),
-        },
-        async(value) => validateName('cloud_volumes', value, false),
-      ],
+      validate: [],
     },
     ...dynamicFields,
   ],
