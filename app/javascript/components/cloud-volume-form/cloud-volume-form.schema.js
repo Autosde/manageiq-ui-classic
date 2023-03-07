@@ -3,6 +3,7 @@ import { parseCondition } from '@data-driven-forms/react-form-renderer';
 import validateName from '../../helpers/storage_manager/validate-names';
 import filterResourcesByCapabilities from '../../helpers/storage_manager/filter-resources-by-capabilities';
 import filterServicesByCapabilities from '../../helpers/storage_manager/filter-service-by-capabilities';
+import { getProviderCapabilities } from '../../helpers/storage_manager/filter-by-capabilities-utils';
 
 const changeValue = (value, loadSchema, emptySchema) => {
   if (value === '-1') {
@@ -22,9 +23,6 @@ const storageManagers = (supports) =>
     });
 
 // storage manager functions:
-
-const getProviderCapabilities = async(providerId) => API.get(`/api/providers/${providerId}?attributes=capabilities`)
-  .then((result) => result.capabilities);
 
 const validateServiceHasResources = (serviceId) =>
   API.get(`/api/storage_services/${serviceId}?attributes=name,storage_resources`)
@@ -92,7 +90,7 @@ const createSchema = (fields, edit, ems, loadSchema, emptySchema) => {
         component: componentTypes.SUB_FORM,
         name: 'resource_type_selection',
         id: 'resource_type_selection',
-        condition: { when: 'required_capabilities', isNotEmpty: true },
+        condition: { when: 'compression', isNotEmpty: true },
         fields: [
           {
             component: 'enhanced-select',
@@ -108,8 +106,14 @@ const createSchema = (fields, edit, ems, loadSchema, emptySchema) => {
               async(value) => validateServiceHasResources(value),
             ],
             resolveProps: (_props, _field, { getState }) => {
-              const capabilityValues = getState().values.required_capabilities.map(({ value }) => value);
-              const emsId = getState().values.ems_id;
+              const stateValues = getState().values;
+              const emsId = stateValues.ems_id;
+              const capabilityValues = [];
+
+              const capabilityNames = fields.find((object) => object.id === 'required_capabilities')
+                .fields.map((capability) => capability.id);
+              capabilityNames.forEach((capabilityName) => capabilityValues.push(stateValues[capabilityName]));
+
               return {
                 key: JSON.stringify(capabilityValues),
                 loadOptions: async() => {
@@ -123,7 +127,7 @@ const createSchema = (fields, edit, ems, loadSchema, emptySchema) => {
             component: 'enhanced-select',
             name: 'storage_resource_id',
             id: 'storage_resource_id',
-            label: __('Storage Resource (if no option appears then no storage resource with selected capabilities was found)'),
+            label: __('Storage Resource(s)'),
             condition: { when: 'mode', is: 'Advanced' },
             onInputChange: () => null,
             isRequired: true,
@@ -133,8 +137,14 @@ const createSchema = (fields, edit, ems, loadSchema, emptySchema) => {
             ],
             isMulti: true,
             resolveProps: (_props, _field, { getState }) => {
-              const capabilityValues = getState().values.required_capabilities.map(({ value }) => value);
-              const emsId = getState().values.ems_id;
+              const stateValues = getState().values;
+              const emsId = stateValues.ems_id;
+              const capabilityValues = [];
+
+              const capabilityNames = fields.find((object) => object.id === 'required_capabilities')
+                .fields.map((capability) => capability.id);
+              capabilityNames.forEach((capabilityName) => capabilityValues.push(stateValues[capabilityName]));
+
               return {
                 key: JSON.stringify(capabilityValues),
                 loadOptions: async() => {

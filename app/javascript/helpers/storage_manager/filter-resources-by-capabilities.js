@@ -11,13 +11,15 @@ const filterResourcesByCapabilities = async(filterArray, providerCapabilities) =
             resourceCapsUuids.push(getCapabilityUuid(providerCapabilities, capabilityName, capabilityValue));
           });
         });
+        resourceCapsUuids.push('-1'); // to filter-in the N/A option of capabilities
+
         if (arrayIncludes(resourceCapsUuids, filterArray)) {
           valueArray.push(resource);
         }
       });
       const options = valueArray.map(({ name, id }) => ({ label: name, value: id }));
       if (options.length === 0) {
-        options.unshift({ label: sprintf(__('No storage resource with selected capabilities.')), value: '-1' });
+        options.unshift({ label: sprintf(__('No storage resource supports all selected capabilities.')), value: '-1' });
       }
       return options;
     });
