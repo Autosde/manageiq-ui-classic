@@ -11,7 +11,7 @@ const filterResourcesByCapabilities = async(filterArray, providerCapabilities) =
             resourceCapsUuids.push(getCapabilityUuid(providerCapabilities, capabilityName, capabilityValue));
           });
         });
-        if (arrayIncludes(resourceCapsUuids, filterArray)) {
+        if (arrayIncludes(filterArray, resourceCapsUuids)) {
           valueArray.push(resource);
         }
       });
