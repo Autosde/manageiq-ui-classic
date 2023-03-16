@@ -24,26 +24,28 @@ const HostInitiatorForm = ({ redirect, storageManagerId }) => {
     }
   }, [storageManagerId]);
 
+  const redirectUrl = storageManagerId ? `/ems_storage/${storageManagerId}?display=host_initiators#/` : redirect;
+
   const onSubmit = async(values) => {
     miqSparkleOn();
     const message = sprintf(__('Defining of Host initiator "%s" has been successfully queued.'), values.name);
     API.post('/api/host_initiators', { action: 'create', resource: values })
-      .then(() => miqRedirectBack(message, 'success', redirect)).catch(miqSparkleOff);
+      .then(() => miqRedirectBack(message, 'success', redirectUrl)).catch(miqSparkleOff);
   };
 
   const onCancel = () => {
     const message = __('Creation of host initiator was cancelled by the user.');
-    miqRedirectBack(message, 'success', redirect);
+    miqRedirectBack(message, 'success', redirectUrl);
   };
 
   const validate = (values) => {
     const errors = {};
-    if (values.port_type == "ISCSI") {
+    if (values.port_type === 'ISCSI') {
       if (!values.iqn || !values.iqn.length) {
         errors.iqn = __('Please provide at least one IQN.');
       }
     }
-    if (values.port_type == "FC" || values.port_type == "NVMeFC") {
+    if (values.port_type === 'FC' || values.port_type === 'NVMeFC') {
       if ((!values.wwpn || !values.wwpn.length) && (!values.custom_wwpn || !values.custom_wwpn.length)) {
         errors.wwpn = __('Please provide at least one WWPN.');
       }

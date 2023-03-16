@@ -12,7 +12,7 @@ const VolumeMappingForm = ({ redirect, storageManagerId }) => {
   const { isLoading, initialValues } = state;
   const [volumeId, setVolumeId] = useState(undefined);
   const [hostInitiatorId, setHostInitiatorId] = useState(undefined);
-  const [hostInitiatorGroupId, setHostInitiatorGroupId] =  useState(undefined);
+  const [hostInitiatorGroupId, setHostInitiatorGroupId] = useState(undefined);
 
   const loadSchema = (appendState = {}) => () => {
     setState((state) => ({
@@ -28,23 +28,26 @@ const VolumeMappingForm = ({ redirect, storageManagerId }) => {
     }
   }, [storageManagerId]);
 
+  const redirectUrl = storageManagerId ? `/ems_storage/${storageManagerId}?display=volume_mappings#/` : redirect;
+
   const onSubmit = async(values) => {
     miqSparkleOn();
     const message = __('Defining of a new Volume mapping has been successfully queued.');
     API.post('/api/volume_mappings', { action: 'create', resource: values })
-      .then(() => miqRedirectBack(message, 'success', redirect)).catch(miqSparkleOff);
+      .then(() => miqRedirectBack(message, 'success', redirectUrl)).catch(miqSparkleOff);
   };
 
   const onCancel = () => {
     const message = __('defining of volume mapping was cancelled by the user');
-    miqRedirectBack(message, 'success', redirect);
+    miqRedirectBack(message, 'success', redirectUrl);
   };
 
   if (isLoading) return <Loading className="export-spinner" withOverlay={false} small />;
 
   return !isLoading && (
     <MiqFormRenderer
-      schema={createSchema(state, setState, !!storageManagerId, initialValues, storageId, setStorageId, volumeId, setVolumeId, hostInitiatorId, setHostInitiatorId, hostInitiatorGroupId, setHostInitiatorGroupId)}
+      schema={createSchema(state, setState, !!storageManagerId, initialValues, storageId, setStorageId, volumeId,
+        setVolumeId, hostInitiatorId, setHostInitiatorId, hostInitiatorGroupId, setHostInitiatorGroupId)}
       initialValues={initialValues}
       onSubmit={onSubmit}
       onCancel={onCancel}

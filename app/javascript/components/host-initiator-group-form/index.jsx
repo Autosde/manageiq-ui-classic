@@ -24,6 +24,8 @@ const HostInitiatorGroupForm = ({ redirect, storageManagerId }) => {
     }
   }, [storageManagerId]);
 
+  const redirectUrl = storageManagerId ? `/ems_storage/${storageManagerId}?display=host_initiator_groups#/` : redirect;
+
   const onSubmit = async(values) => {
     miqSparkleOn();
     const message = sprintf(
@@ -31,12 +33,12 @@ const HostInitiatorGroupForm = ({ redirect, storageManagerId }) => {
       values.name
     );
     API.post('/api/host_initiator_groups', { action: 'create', resource: values })
-      .then(() => miqRedirectBack(message, 'success', redirect)).catch(miqSparkleOff);
+      .then(() => miqRedirectBack(message, 'success', redirectUrl)).catch(miqSparkleOff);
   };
 
   const onCancel = () => {
     const message = __('Creation of new Host Initiator Group was canceled by the user');
-    miqRedirectBack(message, 'warning', '/host_initiator_group/show_list');
+    miqRedirectBack(message, 'warning', redirectUrl);
   };
 
   if (isLoading) return <Loading className="export-spinner" withOverlay={false} small />;

@@ -4,9 +4,9 @@ import MiqFormRenderer from '@@ddf';
 import { Loading } from 'carbon-components-react';
 import createSchema from './physical-storage-form.schema';
 import miqRedirectBack from '../../helpers/miq-redirect-back';
-import mapper from "../../forms/mappers/componentMapper";
+import mapper from '../../forms/mappers/componentMapper';
 import EditingContext from './editing-context';
-import ValidateStorageCredentials from "./validate-storage-credentials";
+import ValidateStorageCredentials from './validate-storage-credentials';
 
 const PhysicalStorageForm = ({ recordId, storageManagerId }) => {
   const [state, setState] = useState({});
@@ -33,6 +33,8 @@ const PhysicalStorageForm = ({ recordId, storageManagerId }) => {
     }
   }, [recordId, storageManagerId]);
 
+  const redirectUrl = storageManagerId ? `/ems_storage/${storageManagerId}?display=physical_storages#/` : '/physical_storage/show_list';
+
   const onSubmit = ({ edit: _edit, ...values }) => {
     miqSparkleOn();
     const request = recordId ? API.patch(`/api/physical_storages/${recordId}`, values) : API.post('/api/physical_storages', values);
@@ -43,7 +45,7 @@ const PhysicalStorageForm = ({ recordId, storageManagerId }) => {
           : __('Add of Physical Storage has been successfully queued.'),
         values.name,
       );
-      miqRedirectBack(message, undefined, '/physical_storage/show_list');
+      miqRedirectBack(message, undefined, redirectUrl);
     }).catch(miqSparkleOff);
   };
 
@@ -54,7 +56,7 @@ const PhysicalStorageForm = ({ recordId, storageManagerId }) => {
         : __('Add of new Physical Storage was cancelled by the user.'),
       initialValues && initialValues.name,
     );
-    miqRedirectBack(message, 'warning', '/physical_storage/show_list');
+    miqRedirectBack(message, 'warning', redirectUrl);
   };
 
   if (isLoading) return <Loading className="export-spinner" withOverlay={false} small />;
