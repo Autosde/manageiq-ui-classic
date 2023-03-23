@@ -1,6 +1,6 @@
 import { componentTypes, validatorTypes } from '@@ddf';
 import React from 'react';
-import { loadProviderCapabilities, parseCapabilitiesForPhysical } from '../../helpers/storage_manager/load-provider-capabilities';
+import { parseCapabilitiesForPhysical } from '../../helpers/storage_manager/load-provider-capabilities';
 import { getProviderCapabilities } from '../../helpers/storage_manager/filter-by-capabilities-utils';
 
 const loadProviders = () =>
@@ -21,8 +21,8 @@ const createSchema = (edit, ems, initialValues, state, setState, familyId, setFa
   let providerCapabilities;
   if (initialValues && initialValues.ems_id) {
     emsId = initialValues.ems_id;
+    familyId = initialValues.physical_storage_family_id;
   }
-
   return ({
     fields: [
       {
@@ -76,6 +76,7 @@ const createSchema = (edit, ems, initialValues, state, setState, familyId, setFa
             name: 'capabilities',
             label: __('Capabilities'),
             isRequired: true,
+            initialValue: 'Default',
             validate: [{ type: validatorTypes.REQUIRED }],
             options: [
               {
@@ -88,8 +89,7 @@ const createSchema = (edit, ems, initialValues, state, setState, familyId, setFa
               },
             ],
             condition: {
-              when: 'physical_storage_family_id',
-              isNotEmpty: true,
+              and: [{ when: 'physical_storage_family_id', isNotEmpty: true }, { when: 'edit', is: '' }],
             },
           },
           {
@@ -101,15 +101,13 @@ const createSchema = (edit, ems, initialValues, state, setState, familyId, setFa
             validate: [{ type: validatorTypes.REQUIRED }],
             isMulti: true,
             simpleValue: true,
-            isDisabled: edit,
             loadOptions: async() => {
               providerCapabilities = await getProviderCapabilities(emsId);
               return parseCapabilitiesForPhysical(providerCapabilities, familyId);
             },
             includeEmpty: false,
             condition: {
-              when: 'capabilities',
-              is: 'Custom',
+              or: [{ when: 'capabilities', is: 'Custom' }, { when: 'edit', is: 'yes' }],
             },
           },
           {
