@@ -8,17 +8,21 @@ class ApplicationHelper::Toolbar::PhysicalStorageCenter < ApplicationHelper::Too
         t = N_('Configuration'),
         t,
         :items => [
-          button(
+          api_button(
             :physical_storage_refresh,
-            'fa fa-refresh fa-lg',
-            N_('Refresh relationships and power states for all items related to this Physical Storage'),
-            N_('Refresh Relationships and Power States'),
-            :image   => "refresh",
-            :data    => {'function'      => 'sendDataWithRx',
-                         'function-data' => {:type => "refresh", :controller => "physicalStorageToolbarController"}},
-            :confirm => N_("Refresh relationships and power states for all items related to this Physical Storage?"),
-            :options => {:feature => :refresh}
-          ),
+            nil,
+            t = N_('Refresh this Physical Storage'),
+            t,
+            :icon         => "fa fa-refresh fa-lg",
+            :klass        => ApplicationHelper::Button::PolymorphicConditionalButton,
+            :options      => {:feature      => :refresh,
+                              :parent_class => "PhysicalStorage"},
+            :api          => {
+              :action => 'refresh',
+              :entity => 'physical_storages'
+            },
+            :confirm      => N_("Are you sure you want to refresh this Physical Storage?"),
+            ),
           button(
             :physical_storage_edit,
             'pficon pficon-edit fa-lg',
@@ -30,7 +34,7 @@ class ApplicationHelper::Toolbar::PhysicalStorageCenter < ApplicationHelper::Too
           api_button(
             :physical_storage_delete,
             nil,
-            t = N_('Delete the Physical Storage'),
+            t = N_('Delete this Physical Storage'),
             t,
             :icon         => "pficon pficon-delete fa-lg",
             :klass        => ApplicationHelper::Button::GenericFeatureButtonWithDisable,
@@ -39,7 +43,7 @@ class ApplicationHelper::Toolbar::PhysicalStorageCenter < ApplicationHelper::Too
               :action => 'delete',
               :entity => 'physical_storages'
             },
-            :confirm      => N_("Are you sure you want to delete this physical storage?\nNote that all of the attached services (e.g. volumes) will be unmapped."),
+            :confirm      => N_("Are you sure you want to delete this Physical Storage?\nNote that all of the attached services (e.g. volumes) will be unmapped."),
             :send_checked => true
           ),
         ]

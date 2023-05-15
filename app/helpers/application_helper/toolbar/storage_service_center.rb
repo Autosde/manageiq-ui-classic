@@ -8,17 +8,21 @@ class ApplicationHelper::Toolbar::StorageServiceCenter < ApplicationHelper::Tool
         t = N_('Configuration'),
         t,
         :items => [
-          button(
+          api_button(
             :storage_service_refresh,
-            'fa fa-refresh fa-lg',
-            N_('Refresh relationships and power states for all items related to this Storage Service'),
-            N_('Refresh Relationships and Power States'),
-            :image   => "refresh",
-            :data    => {'function'      => 'sendDataWithRx',
-                         'function-data' => {:type => "refresh", :controller => "storageServiceToolbarController"}},
-            :confirm => N_("Refresh relationships and power states for all items related to this Storage Service?"),
-            :options => {:feature => :refresh}
-          ),
+            nil,
+            t = N_('Refresh this Storage Service'),
+            t,
+            :icon         => "fa fa-refresh fa-lg",
+            :klass        => ApplicationHelper::Button::PolymorphicConditionalButton,
+            :options      => {:feature      => :refresh,
+                              :parent_class => "StorageService"},
+            :api          => {
+              :action => 'refresh',
+              :entity => 'storage_services'
+            },
+            :confirm      => N_("Are you sure you want to refresh this Storage Service?"),
+            ),
           button(
             :storage_service_edit,
             'pficon pficon-edit fa-lg',
@@ -32,7 +36,7 @@ class ApplicationHelper::Toolbar::StorageServiceCenter < ApplicationHelper::Tool
           api_button(
             :storage_service_delete,
             nil,
-            t = N_('Delete the Storage Service'),
+            t = N_('Delete this Storage Service'),
             t,
             :icon         => "pficon pficon-delete fa-lg",
             :klass        => ApplicationHelper::Button::GenericFeatureButtonWithDisable,

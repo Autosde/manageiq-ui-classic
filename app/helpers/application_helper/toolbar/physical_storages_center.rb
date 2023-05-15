@@ -8,22 +8,28 @@ class ApplicationHelper::Toolbar::PhysicalStoragesCenter < ApplicationHelper::To
         t = N_('Configuration'),
         t,
         :items => [
-          button(
+          api_button(
             :physical_storage_refresh,
-            'fa fa-refresh fa-lg',
-            N_('Refresh relationships and power states for all items related to these Physical Storages'),
-            N_('Refresh Relationships and Power States'),
-            :image   => "refresh",
-            :confirm => N_("Refresh relationships and power states for all items related to these Physical Storages?"),
+            nil,
+            t = N_('Refresh selected Physical Storage(s)'),
+            t,
+            :icon         => "fa fa-refresh fa-lg",
+            :klass        => ApplicationHelper::Button::PolymorphicConditionalButton,
+            :options      => {:feature      => :refresh,
+                              :parent_class => "PhysicalStorage"},
+            :api          => {
+              :action => 'refresh',
+              :entity => 'physical_storages'
+            },
+            :confirm      => N_("Are you sure you want to refresh the selected Physical Storage(s)?"),
             :send_checked => true,
             :enabled      => false,
-            :onwhen       => '1',
-            :options => {:feature => :refresh}
+            :onwhen       => '1+'
           ),
           button(
             :physical_storage_new,
             'pficon pficon-add-circle-o fa-lg',
-            t = N_('Attach a new storage system'),
+            t = N_('Attach a new Storage System'),
             t,
           ),
           button(
@@ -39,7 +45,7 @@ class ApplicationHelper::Toolbar::PhysicalStoragesCenter < ApplicationHelper::To
           api_button(
             :physical_storage_delete,
             nil,
-            t = N_('Delete the Physical Storage'),
+            t = N_('Delete selected Physical Storage(s)'),
             t,
             :icon         => "pficon pficon-delete fa-lg",
             :klass        => ApplicationHelper::Button::PolymorphicConditionalButton,

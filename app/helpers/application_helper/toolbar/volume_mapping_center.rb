@@ -8,21 +8,25 @@ class ApplicationHelper::Toolbar::VolumeMappingCenter < ApplicationHelper::Toolb
         t = N_('Configuration'),
         t,
         :items => [
-          button(
+          api_button(
             :volume_mapping_refresh,
-            'fa fa-refresh fa-lg',
-            N_('Refresh relationships and power states for all items related to this Volume Mapping'),
-            N_('Refresh Relationships and Power States'),
-            :image   => "refresh",
-            :data    => {'function'      => 'sendDataWithRx',
-                         'function-data' => {:type => "refresh", :controller => "volumeMappingToolbarController"}},
-            :confirm => N_("Refresh relationships and power states for all items related to this Volume Mapping?"),
-            :options => {:feature => :refresh}
-          ),
+            nil,
+            t = N_('Refresh this Volume Mapping'),
+            t,
+            :icon         => "fa fa-refresh fa-lg",
+            :klass        => ApplicationHelper::Button::PolymorphicConditionalButton,
+            :options      => {:feature      => :refresh,
+                              :parent_class => "VolumeMapping"},
+            :api          => {
+              :action => 'refresh',
+              :entity => 'volume_mappings'
+            },
+            :confirm      => N_("Are you sure you want to refresh this Volume Mapping?"),
+            ),
           api_button(
             :volume_mapping_delete,
             nil,
-            t = N_('Delete volume mapping'),
+            t = N_('Delete this Volume Mapping'),
             t,
             :icon         => "pficon pficon-delete fa-lg",
             :klass        => ApplicationHelper::Button::GenericFeatureButtonWithDisable,
@@ -31,7 +35,7 @@ class ApplicationHelper::Toolbar::VolumeMappingCenter < ApplicationHelper::Toolb
               :action => 'delete',
               :entity => 'volume_mappings'
             },
-            :confirm      => N_("Warning: The selected volume mappings will be permanently deleted!"),
+            :confirm      => N_("Are you sure you want to delete this Volume Mapping?"),
             :send_checked => true
           ),
         ]
